@@ -1,5 +1,8 @@
 ﻿using RiftekTemplateUpgrade.Model;
 using Newtonsoft.Json;
+using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Web;
 
 namespace RiftekTemplateUpgrade.Service
 {
@@ -20,7 +23,14 @@ namespace RiftekTemplateUpgrade.Service
         {
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(ScannerParameterApi);
-            client.PutAsJsonAsync(client.BaseAddress, scannerSettings);
+
+            IEnumerable<KeyValuePair<string,string>> queryParameters = scannerSettings.GetType().GetProperties().Select(p => new KeyValuePair<string, string>(p.Name, p.GetValue(scannerSettings).ToString()));
+
+            var uri = QueryHelpers.AddQueryString(ScannerParameterApi, queryParameters);
+            var request = new HttpRequestMessage(HttpMethod.Put, uri);
+
+            var response = client.SendAsync(request);
+           
         }
     }
 }
