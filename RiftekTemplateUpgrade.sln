@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32811.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiftekTemplateUpgrade", "RiftekTemplateUpgrade.csproj", "{6516E703-5338-4CBB-8F2E-7C6FE5643FEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6516E703-5338-4CBB-8F2E-7C6FE5643FEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6516E703-5338-4CBB-8F2E-7C6FE5643FEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6516E703-5338-4CBB-8F2E-7C6FE5643FEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6516E703-5338-4CBB-8F2E-7C6FE5643FEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FD1E179F-5DDB-4109-9B55-8442AB77C03E}
+	EndGlobalSection
+EndGlobal
