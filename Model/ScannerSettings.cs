@@ -5,11 +5,8 @@ namespace RiftekTemplateUpgrade.Model
     public class ScannerSettings
     {
         //user sensor
-        [JsonProperty("user_sensor_framerate")]
-        public int FPS { get; set; }
-
-        [JsonProperty("user_sensor_maxFramerate")]
-        public int MaxFPS { get; set; }
+        public int user_sensor_framerate { get; set; }
+        public int user_sensor_maxFramerate { get; set; }
 
         public int user_sensor_exposureControl { get; set; }
         public int user_sensor_exposure1 { get; set; }
