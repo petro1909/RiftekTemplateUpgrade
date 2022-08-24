@@ -14,7 +14,6 @@ namespace RiftekTemplateUpgrade.Controllers
         JsonService JsonService;
         ScannerService ScannerService;
         TemplateService TemplateService;
-        List<Template> Templates;
 
         public TemplateController(JsonService jsonService, ScannerService scannerService, TemplateService templateService)
         {
@@ -22,15 +21,14 @@ namespace RiftekTemplateUpgrade.Controllers
             JsonService = jsonService;
             ScannerService = scannerService;
             TemplateService = templateService;
-            Templates = new List<Template>();
         }
 
         [HttpGet("Templates")]
         public IEnumerable<Template> GetTemplates()
         {
             string jsonTemplates = JsonService.ReadJsonFromFile(TemplatesFilePath);
-            Templates = TemplateService.GetTemplatesFromJson(jsonTemplates);
-            return Templates;
+            List<Template> templates = TemplateService.GetTemplatesFromJson(jsonTemplates);
+            return templates;
         }
 
         [HttpGet("GetScannerSettings")]
@@ -40,11 +38,19 @@ namespace RiftekTemplateUpgrade.Controllers
             return ScannerService.GetScannerSettingsFromJson(jsonScannerSettings);
         }
 
-        [HttpPost("SaveTempalteSettings")]
-        public void SaveTemplateSettings(Template template) 
+        [HttpGet("SetSettings")]
+        public void SetScannerSettings()
         {
-            Templates.Insert(template.Number, template);
-            string templatesJson = TemplateService.WriteTemplatesToJson(Templates);
+            ScannerSettings settings = TemplateService.Templates[1].ScannerSettings;
+            ScannerService.SetScannerSettings(settings);
+        }
+
+
+        [HttpPost("SaveTempalteSettings")]
+        public void SaveTemplateSettings([FromBody]Template template) 
+        {
+            TemplateService.Templates[template.Number] = template;
+            string templatesJson = TemplateService.WriteTemplatesToJson(TemplateService.Templates);
             JsonService.WriteJsonToFile(templatesJson, TemplatesFilePath);
         }
 
@@ -53,14 +59,14 @@ namespace RiftekTemplateUpgrade.Controllers
         {
             ScannerSettings settings = GetScannerSettings().Result;
 
-            Templates = new List<Template>(19);
+            TemplateService.Templates = new List<Template>(19);
             for(int i = 0; i < 18; i++)
             {
                 Template template = new Template(i, settings);
-                Templates.Add(template);
+                TemplateService.Templates.Add(template);
             }
 
-            string templatesJson = TemplateService.WriteTemplatesToJson(Templates);
+            string templatesJson = TemplateService.WriteTemplatesToJson(TemplateService.Templates);
             JsonService.WriteJsonToFile(templatesJson , TemplatesFilePath);
             return RedirectToAction("GetTemplates");
         }
