@@ -7,13 +7,105 @@
 <body>
     <header></header>
     <main>
-        <section class="templates_data"></section>
-        <section class="template_scanner_settings">
-            <section id="laser"></section>
-            <section id="sensor"></section>
-            <section id="pre_processing"></section>
-            <section id="post_processing"></section>
+        <section id="templates_data"></section>
+        <section id="template_settings">
+            <!--<section id="laser">
+                <div id="user_laser_value"></div>
+            </section>
+            <section id="sensor">
+                <div id=""></div>
+            </section>
+                        <section id="pre_processing">fwe</section>
+            <section id="post_processing"></section>-->
         </section>
     </main>
 </body>
 </html>
+<script>
+
+    var templates = []
+    let settings = document.getElementById("template_settings");
+
+    async function GetTemplates() {
+        const response = await fetch("/template/templates", {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        if (response.ok) {
+            templates = await response.json();
+            templates.forEach(template => {
+                CreateTempateDiv(template);
+            });
+        }
+    }
+    GetTemplates();
+
+
+    function CreateTempateDiv(template) {
+        let button = document.createElement("button");
+        button.textContent = template.number;
+        button.onclick = function () {
+            settings.innerHTML = '';
+            ShowSettings(template);
+        }
+
+        var data = document.getElementById("templates_data");
+        data.appendChild(button);
+    }
+
+    function ShowSettings(template) {
+        console.log(template);
+        console.log(template.scannerSettings);
+        for (const [key, val] of Object.entries(template.scannerSettings)) {
+            let setting = document.createElement("div");
+
+            let label = document.createElement("span");
+            label.innerText = key;
+
+            let value = document.createElement("span");
+            value.innerText = val;
+
+            setting.append(label, value);
+
+            settings.appendChild(setting);
+        }
+
+        let setTemplateSettings = document.createElement("button");
+        setTemplateSettings.textContent = "Save current scanner settings for this template";
+        setTemplateSettings.onclick = function () {
+            settings.innerHTML = '';
+            SaveCurrentSettingsToTemplate(template);
+        }
+        settings.appendChild(setTemplateSettings);
+
+    }
+
+
+    async function SaveCurrentSettingsToTemplate(template) {
+        const response = await fetch("/template/GetScannerSettings", {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        if (response.ok) {
+            template.scannerSettings = await response.json();
+            
+        }
+
+        const response1 = await fetch("/template/SaveTempalteSettings", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(template)
+        });
+        if (response1.ok) {
+            ShowSettings(template);
+        }
+
+
+    }
+
+
+
+
+</script>
