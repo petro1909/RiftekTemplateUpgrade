@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using RiftekTemplateUpgrade.Model;
 using RiftekTemplateUpgrade.Service;
 using HtmlAgilityPack;
+using RiftekTemplateUpgrade.FanucSocket;
 
 namespace RiftekTemplateUpgrade.Controllers
 {
@@ -14,13 +15,17 @@ namespace RiftekTemplateUpgrade.Controllers
         JsonService JsonService;
         ScannerService ScannerService;
         TemplateService TemplateService;
+        SocketTcpServer SocketTcpServer;
 
-        public TemplateController(JsonService jsonService, ScannerService scannerService, TemplateService templateService)
+
+        public TemplateController(JsonService jsonService, ScannerService scannerService, TemplateService templateService, SocketTcpServer socketTcpServer)
         {
             TemplatesFilePath = $"{Directory.GetCurrentDirectory()}\\resources\\templates.json";
             JsonService = jsonService;
             ScannerService = scannerService;
             TemplateService = templateService;
+            SocketTcpServer = socketTcpServer;
+            SocketTcpServer.RecieveMessages(TemplateService);
         }
 
         [HttpGet("Templates")]
