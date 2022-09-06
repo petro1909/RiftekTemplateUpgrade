@@ -3,109 +3,127 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
+    <script src="lib/jquery/jquery.min.js"></script>
+    <link href="templates.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-    <header></header>
     <main>
-        <section id="templates_data"></section>
-        <section id="template_settings">
-            <!--<section id="laser">
-                <div id="user_laser_value"></div>
+        <section id="tempaltes">
+            <h3>Шаблоны</h3>
+            <section id="templates_data">
             </section>
-            <section id="sensor">
-                <div id=""></div>
+            <section id="template_settings">
+                <section>
+                    <h4>Сенсор</h4>
+                    <div>
+                        <p>Профили(кадры) в секудну : </p>
+                        <p id="user_sensor_framerate"></p>
+                    </div>
+                    <div>
+                        <p>Удвоенные профили(кадры) в секудну : </p>
+                        <p id="user_sensor_doubleSpeedEnabled"></p>
+                    </div>
+                    <div>
+                        <p>Контроль экспозиции : </p>
+                        <p id="user_sensor_exposureControl"></p>
+                    </div>
+                    <div>
+                        <p>Экспозиция 1 : </p>
+                        <p id="user_sensor_exposure1"></p>
+                    </div>
+                    <div>
+                        <p>Экспозиция 2 : </p>
+                        <p id="user_sensor_exposure2"></p>
+                    </div>
+                    <div>
+                        <p>Экспозиция 3 : </p>
+                        <p id="user_sensor_exposure3"></p>
+                    </div>
+                    <div>
+                        <p>Расширение динамического диапазона : </p>
+                        <p id="user_sensor_edrType"></p>
+                    </div>
+                    <div>
+                        <p>Коэффициент снижения экспозиции : </p>
+                        <p id="user_sensor_edrColumnDivider"></p>
+                    </div>
+                </section>
+                <section>
+                    <h4>Лазер</h4>
+                    <div>
+                        <p>Мощность лазера : </p>
+                        <p id="user_laser_value"></p>
+                    </div>
+                </section>
+                
+                
+                <section>
+                    <h4>Пре обработка</h4>
+                    <div>
+                        <p>Порог обрезки сигнала : </p>
+                        <p id="user_processing_intensityClipping"></p>
+                    </div>
+                    <div>
+                        <p>Алгоритм определения пика яркости : </p>
+                        <p id="user_processing_peakMode"></p>
+                    </div>
+                    <div>
+                        <p>Уровень обнаружения профиля : </p>
+                        <p id="user_processing_threshold"></p>
+                    </div>
+                    <div>
+                        <p>Ширина прика яркости, мин : </p>
+                        <p id="user_processing_signalWidthMin"></p>
+                    </div>
+                    <div>
+                        <p>Ширина прика яркости, макс : </p>
+                        <p id="user_processing_signalWidthMax"></p>
+                    </div>
+                </section>
+                
+                <section>
+                    <h4>Пост обработка</h4>
+                    <div>
+                        <p>Размер медианного фильтра : </p>
+                        <p id="user_processing_medianMode"></p>
+                    </div>
+                    <div>
+                        <p>Размер билатерального фильтра : </p>
+                        <p id="user_processing_bilateralMode"></p>
+                    </div>
+                </section>
+
+                <button id="save_settings" disabled>Применить текущие настройки сканера для этого шаблона</button>
+                <button id="delete_template" disabled>Удалить шаблон</button>
             </section>
-                        <section id="pre_processing">fwe</section>
-            <section id="post_processing"></section>-->
+        </section>
+        <section id="settings">
+            <h3>Настройки</h3>
+            <section>
+                <!--<form name="comm_params_from" >-->
+                <section id="d_ip">
+                    <label for="desktop_ip">Desktop ip</label>
+                    <input type="text" id="desktop_ip" name="desktop_ip" disabled />
+                    <button>Update desktop ip</button>
+                </section>
+                
+                <section id="d_port">
+                    <label for="desktop_port">Desktop port</label>
+                    <input type="text" id="desktop_port" name="desktop_port" />
+                </section>
+                
+                <section id="s_ip">
+                    <label for="scanner_ip">Scanner ip</label>
+                    <input type="text" id="scanner_ip" name="scanner_ip" />
+                </section>
+
+
+                <button onclick="SaveCommSettingsForm()">Save parameters</button>
+                <!--</form>-->
+            </section>
         </section>
     </main>
 </body>
 </html>
-<script>
-
-    var templates = []
-    let settings = document.getElementById("template_settings");
-
-    async function GetTemplates() {
-        const response = await fetch("/template/templates", {
-            method: "GET",
-            headers: { "Accept": "application/json" }
-        });
-        if (response.ok) {
-            templates = await response.json();
-            templates.forEach(template => {
-                CreateTempateDiv(template);
-            });
-        }
-    }
-    GetTemplates();
-
-
-    function CreateTempateDiv(template) {
-        let button = document.createElement("button");
-        button.textContent = template.number;
-        button.onclick = function () {
-            settings.innerHTML = '';
-            ShowSettings(template);
-        }
-
-        var data = document.getElementById("templates_data");
-        data.appendChild(button);
-    }
-
-    function ShowSettings(template) {
-        console.log(template);
-        console.log(template.scannerSettings);
-        for (const [key, val] of Object.entries(template.scannerSettings)) {
-            let setting = document.createElement("div");
-
-            let label = document.createElement("span");
-            label.innerText = key;
-
-            let value = document.createElement("span");
-            value.innerText = val;
-
-            setting.append(label, value);
-
-            settings.appendChild(setting);
-        }
-
-        let setTemplateSettings = document.createElement("button");
-        setTemplateSettings.textContent = "Save current scanner settings for this template";
-        setTemplateSettings.onclick = function () {
-            settings.innerHTML = '';
-            SaveCurrentSettingsToTemplate(template);
-        }
-        settings.appendChild(setTemplateSettings);
-
-    }
-
-
-    async function SaveCurrentSettingsToTemplate(template) {
-        const response = await fetch("/template/GetScannerSettings", {
-            method: "GET",
-            headers: { "Accept": "application/json" }
-        });
-        if (response.ok) {
-            template.scannerSettings = await response.json();
-            
-        }
-
-        const response1 = await fetch("/template/SaveTempalteSettings", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(template)
-        });
-        if (response1.ok) {
-            ShowSettings(template);
-        }
-
-
-    }
-
-
-
-
-</script>
+<script type="text/javascript" src="js/settings.js"></script>
+<script type="text/javascript" src="js/templates.js"></script>
