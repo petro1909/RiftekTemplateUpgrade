@@ -3,6 +3,15 @@ using RiftekTemplateUpgrade.Model;
 using RiftekTemplateUpgrade.Service;
 using HtmlAgilityPack;
 using RiftekTemplateUpgrade.FanucSocket;
+using System.Net;
+using System.Net.NetworkInformation;
+using RiftekTemplateUpgrade.Worker;
+//using Newtonsoft.Json;
+//using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace RiftekTemplateUpgrade.Controllers
 {
@@ -10,70 +19,65 @@ namespace RiftekTemplateUpgrade.Controllers
     [Route("[controller]")]
     public class TemplateController : ControllerBase
     {
-        private const string TestFilePath = "C:\\Users\\BENFIN\\source\\repos\\Riftek\\RiftekTemplateUpgrade\\resources\\txt.json";
+        //private const string TestFilePath = "C:\\Users\\BENFIN\\source\\repos\\Riftek\\RiftekTemplateUpgrade\\resources\\txt.json";
         string TemplatesFilePath;
-        JsonService JsonService;
         ScannerService ScannerService;
         TemplateService TemplateService;
         SocketTcpServer SocketTcpServer;
 
 
-        public TemplateController(JsonService jsonService, ScannerService scannerService, TemplateService templateService, SocketTcpServer socketTcpServer)
+        public TemplateController(ScannerService scannerService, TemplateService templateService, SocketTcpServer socketTcpServer)
         {
-            TemplatesFilePath = $"{Directory.GetCurrentDirectory()}\\resources\\templates.json";
-            JsonService = jsonService;
             ScannerService = scannerService;
             TemplateService = templateService;
             SocketTcpServer = socketTcpServer;
-            SocketTcpServer.RecieveMessages(TemplateService);
         }
 
         [HttpGet("Templates")]
-        public IEnumerable<Template> GetTemplates()
+        public JsonResult GetTemplates()
         {
-            string jsonTemplates = JsonService.ReadJsonFromFile(TemplatesFilePath);
-            List<Template> templates = TemplateService.GetTemplatesFromJson(jsonTemplates);
-            return templates;
-        }
-
-        [HttpGet("GetScannerSettings")]
-        public async Task<ScannerSettings> GetScannerSettings()
-        {
-            string jsonScannerSettings = await JsonService.ReadJsonFromApi(ScannerService.ScannerParameterApi);
-            return ScannerService.GetScannerSettingsFromJson(jsonScannerSettings);
-        }
-
-        [HttpGet("SetSettings")]
-        public void SetScannerSettings()
-        {
-            ScannerSettings settings = TemplateService.Templates[1].ScannerSettings;
-            ScannerService.SetScannerSettings(settings);
+            List<Template> templates = TemplateService.GetTemplatesFromFile();
+            return new JsonResult(templates);
+            //return templates;
         }
 
 
         [HttpPost("SaveTempalteSettings")]
         public void SaveTemplateSettings([FromBody]Template template) 
         {
-            TemplateService.Templates[template.Number] = template;
-            string templatesJson = TemplateService.WriteTemplatesToJson(TemplateService.Templates);
-            JsonService.WriteJsonToFile(templatesJson, TemplatesFilePath);
+            TemplateService.UpdateTemplate(template);
         }
 
-        [HttpGet("FullTemplates")]
-        public IActionResult FullTemplates()
+        [HttpGet("AddTemplate")]
+        public async Task AddTemplate()
         {
-            ScannerSettings settings = GetScannerSettings().Result;
-
-            TemplateService.Templates = new List<Template>(19);
-            for(int i = 0; i < 18; i++)
-            {
-                Template template = new Template(i, settings);
-                TemplateService.Templates.Add(template);
-            }
-
-            string templatesJson = TemplateService.WriteTemplatesToJson(TemplateService.Templates);
-            JsonService.WriteJsonToFile(templatesJson , TemplatesFilePath);
-            return RedirectToAction("GetTemplates");
+            ScannerSettings settings = await ScannerService.GetScannerSettingsFromApi();
+            TemplateService.AddTemplate(settings);
         }
+
+        [HttpGet("DeleteTemplate")]
+        public void DeleteTemplate(int number)
+        {
+           TemplateService.DeleteTemplate(number);
+        }
+
+        //For Tests
+
+        //[HttpGet("FullTemplates")]
+        //public IActionResult FullTemplates()
+        //{
+        //    ScannerSettings settings = GetScannerSettings().Result;
+
+        //    TemplateService.Templates = new List<Template>(19);
+        //    for(int i = 0; i < 18; i++)
+        //    {
+        //        Template template = new Template(i, settings);
+        //        TemplateService.Templates.Add(template);
+        //    }
+
+        //    string templatesJson = TemplateService.WriteTemplatesToJson(TemplateService.Templates);
+        //    JsonService.WriteJsonToFile(templatesJson , TemplatesFilePath);
+        //    return RedirectToAction("GetTemplates");
+        //}
     }
 }

@@ -1,10 +1,14 @@
 ﻿using RiftekTemplateUpgrade.Model;
 using Newtonsoft.Json;
 
-namespace RiftekTemplateUpgrade.Service
+namespace RiftekTemplateUpgrade.Worker
 {
-    public class JsonService
+    public class JsonWorker
     {
+        public JsonWorker()
+        {
+
+        }
         //private const string filePath = "C:\\Users\\BENFIN\\source\\repos\\Riftek\\RiftekTemplateUpgrade\\resources\\txt.json";
 
         //public ScannerSettings GetScannerSettingsFromJsonFile()
@@ -23,7 +27,7 @@ namespace RiftekTemplateUpgrade.Service
         //    return settings;
         //}
 
-        public async Task<string> ReadJsonFromApi(string api)
+        public static async Task<string> ReadJsonFromApi(string api)
         {
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(api);
@@ -31,15 +35,15 @@ namespace RiftekTemplateUpgrade.Service
             return await response.Content.ReadAsStringAsync();
         }
 
-        public string ReadJsonFromFile(string filePath)
+        public static string ReadJsonFromFile(string filePath)
         {
             using (StreamReader reader = new StreamReader(filePath))
             {
-                 return reader.ReadToEnd();
+                return reader.ReadToEnd();
             }
         }
 
-        public void WriteJsonToFile(string json, string filePath)
+        public static void WriteJsonToFile(string json, string filePath)
         {
             using (StreamWriter writer = new StreamWriter(filePath, false))
             {

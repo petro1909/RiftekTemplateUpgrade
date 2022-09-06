@@ -1,12 +1,13 @@
 using RiftekTemplateUpgrade.Service;
 using RiftekTemplateUpgrade.FanucSocket;
+using RiftekTemplateUpgrade.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<JsonService>();
+builder.Services.AddSingleton<JsonWorker>();
 builder.Services.AddSingleton<ScannerService>();
 builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddSingleton<SocketTcpServer>();
@@ -31,7 +32,6 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
-
 
 
 app.Run();

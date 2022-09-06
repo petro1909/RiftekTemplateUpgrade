@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿//using Newtonsoft.Json;
+//using Newtonsoft.Json.Converters;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace RiftekTemplateUpgrade.Model
 {
@@ -8,7 +11,8 @@ namespace RiftekTemplateUpgrade.Model
         public int user_sensor_framerate { get; set; }
         public int user_sensor_maxFramerate { get; set; }
 
-        public int user_sensor_exposureControl { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public ExposureControl user_sensor_exposureControl { get; set; }
         public int user_sensor_exposure1 { get; set; }
         public int user_sensor_exposure2 { get; set; }
         public int user_sensor_exposure3 { get; set; }
@@ -24,7 +28,9 @@ namespace RiftekTemplateUpgrade.Model
         public int user_processing_profPerSec { get; set; }
         public int user_processing_medianMode { set; get; }
 	    public int user_processing_bilateralMode { set; get; }
-	    public int user_processing_peakMode { get; set; }
+        
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public PeakMode user_processing_peakMode { get; set; }
 
 
 
@@ -34,7 +40,9 @@ namespace RiftekTemplateUpgrade.Model
 
         //user_sensor
         public bool user_sensor_doubleSpeedEnabled { get; set; }
-        public int user_sensor_edrType  { get; set; }
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public EdrMode user_sensor_edrType  { get; set; }
         public int user_sensor_edrColumnDivider { get; set; }
 
 
